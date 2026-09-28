@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { FilmsService } from 'src/films/films.service';
 import { configProvider } from './app.config.provider';
-import { FilmsController } from './order/films/films.controller';
-import { FilmsService } from './order/films/films.service';
-import { FilmsService } from './films/films.service';
 import { FilmsController } from './films/films.controller';
-import { OrderController } from './order/order.controller';
-import { OrderService } from './order/order.service';
-import { OrderModule } from './order/order.module';
 import { FilmsModule } from './films/films.module';
+import { OrderController } from './order/order.controller';
+import { OrderModule } from './order/order.module';
+import { OrderService } from './order/order.service';
 
 @Module({
   imports: [
@@ -19,7 +19,10 @@ import { FilmsModule } from './films/films.module';
     }),
     OrderModule,
     FilmsModule,
-    // @todo: Добавьте раздачу статических файлов из public
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../public'),
+      serveRoot: '/content/afisha',
+    }),
   ],
   controllers: [FilmsController, OrderController],
   providers: [configProvider, FilmsService, OrderService],
