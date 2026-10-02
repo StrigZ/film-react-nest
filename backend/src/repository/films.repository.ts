@@ -3,7 +3,7 @@ import { FilmDto } from 'src/common/dto/film.dto';
 import { SessionDto } from 'src/common/dto/session.dto';
 
 export type BookSeatResult =
-  | { status: 'booked' }
+  | { status: 'booked'; session: SessionDto }
   | { status: 'film-not-found' }
   | { status: 'session-not-found' }
   | { status: 'seat-taken' }

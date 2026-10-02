@@ -43,12 +43,29 @@ export class MongoFilmsRepository extends FilmsRepository {
       {
         id: filmId,
         'schedule.id': sessionId,
+        'schedule.rows': { $gte: row },
+        'schedule.seats': { $gte: seat },
         'schedule.taken': { $ne: seatId },
       },
       { $push: { 'schedule.$.taken': seatId } },
     );
 
-    if (result.matchedCount > 0) return { status: 'booked' };
+    if (result.matchedCount > 0) {
+      const film = await this.filmModel
+        .findOne(
+          { id: filmId, 'schedule.id': sessionId },
+          { schedule: { $elemMatch: { id: sessionId } } },
+        )
+        .lean<Pick<FilmEntity, 'schedule'>>()
+        .exec();
+
+      const session = film?.schedule?.[0];
+      if (!session) {
+        return { status: 'session-not-found' };
+      }
+
+      return { status: 'booked', session: toSessionDto(session) };
+    }
 
     const film = await this.filmModel
       .findOne({ id: filmId }, { schedule: 1 })
@@ -58,6 +75,10 @@ export class MongoFilmsRepository extends FilmsRepository {
 
     const target = film.schedule.find((s) => s.id === sessionId);
     if (!target) return { status: 'session-not-found' };
+
+    if (row > target.rows || seat > target.seats) {
+      return { status: 'seat-out-of-bounds' };
+    }
 
     return { status: 'seat-taken' };
   }

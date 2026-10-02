@@ -20,17 +20,6 @@ export class TicketDto {
   @IsInt()
   @Min(1)
   seat: number;
-
-  @IsInt()
-  @Min(1)
-  price: number;
-
-  @IsString()
-  day: string;
-  @IsString()
-  daytime: string;
-  @IsString()
-  time: string;
 }
 
 export class CreateOrderDto {
