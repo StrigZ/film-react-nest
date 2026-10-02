@@ -1,9 +1,16 @@
-import { FilmDto } from 'src/films/dto/film.dto';
-import { SessionDto } from 'src/films/dto/session.dto';
-import { TicketDto } from 'src/order/dto/create-order.dto';
+import { TicketDto } from 'src/common/dto/create-order.dto';
+import { FilmDto } from 'src/common/dto/film.dto';
+import { SessionDto } from 'src/common/dto/session.dto';
+
+export type BookSeatResult =
+  | { status: 'booked' }
+  | { status: 'film-not-found' }
+  | { status: 'session-not-found' }
+  | { status: 'seat-taken' }
+  | { status: 'seat-out-of-bounds' };
 
 export abstract class FilmsRepository {
   abstract findAll(): Promise<FilmDto[]>;
   abstract findSchedule(filmId: string): Promise<SessionDto[] | null>;
-  abstract createOrder(tickets: TicketDto[]): Promise<void>;
+  abstract bookSeat(ticket: TicketDto): Promise<BookSeatResult>;
 }

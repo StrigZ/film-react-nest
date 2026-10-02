@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ListResponseDto } from 'src/common/list-response.dto';
-import { FilmDto } from './dto/film.dto';
-import { SessionDto } from './dto/session.dto';
+import { FilmDto } from '../common/dto/film.dto';
+import { SessionDto } from '../common/dto/session.dto';
 import { FilmsService } from './films.service';
 
 @Controller('films')
