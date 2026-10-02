@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { OrderService } from './order.service';
+import { FilmsRepositoryModule } from 'src/repository/films-repository.module';
 import { OrderController } from './order.controller';
+import { OrderService } from './order.service';
 
 @Module({
+  imports: [FilmsRepositoryModule],
   controllers: [OrderController],
   providers: [OrderService],
 })

@@ -1,19 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { FilmEntity, FilmSchema } from './entities/film.entity';
+import { FilmsRepositoryModule } from 'src/repository/films-repository.module';
 import { FilmsController } from './films.controller';
-import { FilmsRepository } from './films.repository';
 import { FilmsService } from './films.service';
-import { MongoFilmsRepository } from './mongo-films.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: FilmEntity.name, schema: FilmSchema }]),
-  ],
+  imports: [FilmsRepositoryModule],
   controllers: [FilmsController],
-  providers: [
-    FilmsService,
-    { provide: FilmsRepository, useClass: MongoFilmsRepository },
-  ],
+  providers: [FilmsService],
 })
 export class FilmsModule {}
