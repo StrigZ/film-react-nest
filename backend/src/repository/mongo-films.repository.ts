@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TicketDto } from 'src/common/dto/create-order.dto';
-import { FilmDto } from '../common/dto/film.dto';
-import { SessionDto } from '../common/dto/session.dto';
+import { FilmDto } from 'src/common/dto/film.dto';
+import { SessionDto } from 'src/common/dto/session.dto';
+import { SeatReservation } from 'src/common/seat-reservation';
 import { FilmEntity } from './entities/film.entity';
 import { toFilmDto, toSessionDto } from './films.converters';
 import { BookSeatResult, FilmsRepository } from './films.repository';
 
 @Injectable()
 export class MongoFilmsRepository extends FilmsRepository {
+  private readonly logger = new Logger(MongoFilmsRepository.name);
+
   constructor(
     @InjectModel(FilmEntity.name)
     private readonly filmModel: Model<FilmEntity>,
@@ -35,51 +37,54 @@ export class MongoFilmsRepository extends FilmsRepository {
     return film ? film.schedule.map(toSessionDto) : null;
   }
 
-  async bookSeat(ticket: TicketDto): Promise<BookSeatResult> {
-    const { film: filmId, session: sessionId, row, seat } = ticket;
+  async bookSeat(reservation: SeatReservation): Promise<BookSeatResult> {
+    const { filmId, sessionId, row, seat } = reservation;
     const seatId = `${row}:${seat}`;
 
     const result = await this.filmModel.updateOne(
       {
         id: filmId,
-        'schedule.id': sessionId,
-        'schedule.rows': { $gte: row },
-        'schedule.seats': { $gte: seat },
-        'schedule.taken': { $ne: seatId },
+        schedule: {
+          $elemMatch: {
+            id: sessionId,
+            rows: { $gte: row },
+            seats: { $gte: seat },
+            taken: { $ne: seatId },
+          },
+        },
       },
       { $push: { 'schedule.$.taken': seatId } },
     );
 
-    if (result.matchedCount > 0) {
-      const film = await this.filmModel
-        .findOne(
-          { id: filmId, 'schedule.id': sessionId },
-          { schedule: { $elemMatch: { id: sessionId } } },
-        )
-        .lean<Pick<FilmEntity, 'schedule'>>()
-        .exec();
-
-      const session = film?.schedule?.[0];
-      if (!session) {
-        return { status: 'session-not-found' };
-      }
-
-      return { status: 'booked', session: toSessionDto(session) };
-    }
-
     const film = await this.filmModel
-      .findOne({ id: filmId }, { schedule: 1 })
-      .lean<Pick<FilmEntity, 'schedule'>>();
+      .findOne({ id: filmId }, { schedule: { $elemMatch: { id: sessionId } } })
+      .lean<Pick<FilmEntity, 'schedule'>>()
+      .exec();
 
     if (!film) return { status: 'film-not-found' };
 
-    const target = film.schedule.find((s) => s.id === sessionId);
-    if (!target) return { status: 'session-not-found' };
+    // если сеанса нет, Mongo не вернёт поле schedule вовсе
+    const session = film.schedule?.[0];
+    if (!session) return { status: 'session-not-found' };
 
-    if (row > target.rows || seat > target.seats) {
+    if (result.matchedCount === 1) {
+      return { status: 'booked', session: toSessionDto(session) };
+    }
+    if (row > session.rows || seat > session.seats) {
       return { status: 'seat-out-of-bounds' };
     }
-
     return { status: 'seat-taken' };
+  }
+
+  async releaseSeat({
+    filmId,
+    sessionId,
+    row,
+    seat,
+  }: SeatReservation): Promise<void> {
+    await this.filmModel.updateOne(
+      { id: filmId, 'schedule.id': sessionId },
+      { $pull: { 'schedule.$.taken': `${row}:${seat}` } },
+    );
   }
 }

@@ -1,8 +1,6 @@
-export class BookedTicketDto {
+export interface SeatReservation {
   filmId: string;
   sessionId: string;
   row: number;
   seat: number;
-  price: number;
-  daytime: string;
 }
