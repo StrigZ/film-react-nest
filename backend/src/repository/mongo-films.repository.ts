@@ -1,17 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { FilmDto } from 'src/common/dto/film.dto';
-import { SessionDto } from 'src/common/dto/session.dto';
 import { SeatReservation } from 'src/common/seat-reservation';
+import { FilmDto } from 'src/films/dto/film.dto';
+import { SessionDto } from 'src/films/dto/session.dto';
 import { FilmEntity } from './entities/film.entity';
 import { toFilmDto, toSessionDto } from './films.converters';
 import { BookSeatResult, FilmsRepository } from './films.repository';
 
 @Injectable()
 export class MongoFilmsRepository extends FilmsRepository {
-  private readonly logger = new Logger(MongoFilmsRepository.name);
-
   constructor(
     @InjectModel(FilmEntity.name)
     private readonly filmModel: Model<FilmEntity>,

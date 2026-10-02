@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ListResponseDto } from 'src/common/list-response.dto';
 import { FilmsRepository } from 'src/repository/films.repository';
-import { FilmDto } from '../common/dto/film.dto';
-import { SessionDto } from '../common/dto/session.dto';
+import { FilmDto } from './dto/film.dto';
+import { SessionDto } from './dto/session.dto';
 
 @Injectable()
 export class FilmsService {

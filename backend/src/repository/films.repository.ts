@@ -1,6 +1,6 @@
-import { FilmDto } from 'src/common/dto/film.dto';
-import { SessionDto } from 'src/common/dto/session.dto';
 import { SeatReservation } from 'src/common/seat-reservation';
+import { FilmDto } from 'src/films/dto/film.dto';
+import { SessionDto } from 'src/films/dto/session.dto';
 
 export type BookSeatResult =
   | { status: 'booked'; session: SessionDto }

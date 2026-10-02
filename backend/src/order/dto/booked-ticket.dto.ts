@@ -1,8 +1,9 @@
 export class BookedTicketDto {
-  filmId: string;
-  sessionId: string;
+  id: string;
+  film: string;
+  session: string;
+  daytime: string;
   row: number;
   seat: number;
   price: number;
-  daytime: string;
 }

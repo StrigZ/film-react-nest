@@ -5,8 +5,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { SessionDto } from 'src/common/dto/session.dto';
+import { randomUUID } from 'crypto';
 import { SeatReservation } from 'src/common/seat-reservation';
+import { SessionDto } from 'src/films/dto/session.dto';
 import { ListResponseDto } from '../common/list-response.dto';
 import {
   BookSeatResult,
@@ -14,7 +15,6 @@ import {
 } from '../repository/films.repository';
 import { BookedTicketDto } from './dto/booked-ticket.dto';
 import { CreateOrderDto, TicketDto } from './dto/create-order.dto';
-
 const toSeatReservation = (ticket: TicketDto): SeatReservation => ({
   filmId: ticket.film,
   sessionId: ticket.session,
@@ -42,8 +42,9 @@ export class OrderService {
 
         reserved.push(reservation);
         items.push({
-          filmId: ticket.film,
-          sessionId: ticket.session,
+          id: randomUUID(),
+          film: ticket.film,
+          session: ticket.session,
           row: ticket.row,
           seat: ticket.seat,
           price: session.price,
