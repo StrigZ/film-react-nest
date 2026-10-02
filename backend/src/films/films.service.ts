@@ -1,12 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ListResponseDto } from 'src/common/list-response.dto';
+import { FilmDto } from './dto/film.dto';
+import { SessionDto } from './dto/session.dto';
+import { FilmsRepository } from './films.repository';
 
 @Injectable()
 export class FilmsService {
-  findAll() {
-    return `This action returns all films`;
+  constructor(private readonly filmsRepository: FilmsRepository) {}
+
+  async getFilms(): Promise<ListResponseDto<FilmDto>> {
+    const items = await this.filmsRepository.findAll();
+    return { total: items.length, items };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} film`;
+  async getSchedule(filmId: string): Promise<ListResponseDto<SessionDto>> {
+    const items = await this.filmsRepository.findSchedule(filmId);
+
+    if (items === null) {
+      throw new NotFoundException(`Фильм ${filmId} не найден`);
+    }
+
+    return { total: items.length, items };
   }
 }

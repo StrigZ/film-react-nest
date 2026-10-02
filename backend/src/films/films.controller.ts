@@ -1,4 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { ListResponseDto } from 'src/common/list-response.dto';
+import { FilmDto } from './dto/film.dto';
+import { SessionDto } from './dto/session.dto';
 import { FilmsService } from './films.service';
 
 @Controller('films')
@@ -6,12 +9,14 @@ export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 
   @Get()
-  findAll() {
-    return this.filmsService.findAll();
+  getFilms(): Promise<ListResponseDto<FilmDto>> {
+    return this.filmsService.getFilms();
   }
 
   @Get(':id/schedule')
-  findOne(@Param('id') id: string) {
-    return this.filmsService.findOne(+id);
+  getSchedule(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ListResponseDto<SessionDto>> {
+    return this.filmsService.getSchedule(id);
   }
 }

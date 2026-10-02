@@ -1,11 +1,15 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import 'dotenv/config';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
+
   app.setGlobalPrefix('api/afisha');
   app.enableCors();
-  await app.listen(3000);
+
+  await app.listen(Number(config.get<string>('PORT', '3000')));
 }
-bootstrap();
+
+void bootstrap();
