@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: afisha-mongo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./test/mongodb_initial_stub.json:/seed/films.json:ro
+
+volumes:
+  mongo-data:
