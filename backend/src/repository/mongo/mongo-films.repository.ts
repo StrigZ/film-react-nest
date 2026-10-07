@@ -4,9 +4,12 @@ import { Model } from 'mongoose';
 import { SeatReservation } from 'src/common/seat-reservation';
 import { FilmDto } from 'src/films/dto/film.dto';
 import { SessionDto } from 'src/films/dto/session.dto';
-import { FilmEntity } from './entities/film.entity';
-import { toFilmDto, toSessionDto } from './films.converters';
-import { BookSeatResult, FilmsRepository } from './films.repository';
+import {
+  BookSeatResult,
+  FilmsRepository,
+} from 'src/repository/films.repository';
+import { FilmEntity } from 'src/repository/mongo/entities/film.entity';
+import { toFilmDto, toSessionDto } from 'src/repository/mongo/films.converters';
 
 @Injectable()
 export class MongoFilmsRepository extends FilmsRepository {

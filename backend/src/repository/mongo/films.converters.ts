@@ -1,5 +1,5 @@
-import { FilmDto } from '../films/dto/film.dto';
-import { SessionDto } from '../films/dto/session.dto';
+import { FilmDto } from 'src/films/dto/film.dto';
+import { SessionDto } from 'src/films/dto/session.dto';
 import { FilmEntity } from './entities/film.entity';
 import { SessionEntity } from './entities/session.entity';
 
