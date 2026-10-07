@@ -9,5 +9,21 @@ services:
       - mongo-data:/data/db
       - ./test/mongodb_initial_stub.json:/seed/films.json:ro
 
+  postgres:
+    image: postgres:16
+    container_name: afisha-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: afisha
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_DB: afisha
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./test/prac.init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./test/prac.films.sql:/docker-entrypoint-initdb.d/02-films.sql:ro
+      - ./test/prac.shedules.sql:/docker-entrypoint-initdb.d/03-shedules.sql:ro
 volumes:
   mongo-data:
+  postgres-data:
