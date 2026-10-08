@@ -12,9 +12,17 @@ import { MongoFilmsRepository } from 'src/repository/mongo/mongo-films.repositor
   imports: [
     MongooseModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        uri: config.getOrThrow<string>('DATABASE_URL'),
-      }),
+      useFactory: (config: ConfigService) => {
+        const host = config.getOrThrow<string>('DATABASE_HOST');
+        const port = config.getOrThrow<string>('DATABASE_PORT');
+        const name = config.getOrThrow<string>('DATABASE_NAME');
+
+        const uri = `mongodb://${host}:${port}/${name}`;
+
+        return {
+          uri,
+        };
+      },
     }),
     MongooseModule.forFeature([{ name: FilmEntity.name, schema: FilmSchema }]),
   ],
