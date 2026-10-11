@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   SessionEntity,
   SessionSchema,
-} from 'src/repository/entities/session.entity';
+} from 'src/repository/mongo/entities/session.entity';
 
 @Schema({ collection: 'films' })
 export class FilmEntity {
