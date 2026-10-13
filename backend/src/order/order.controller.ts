@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ListResponseDto } from 'src/common/list-response.dto';
+import { ListResponseDto } from '../common/list-response.dto';
 import { BookedTicketDto } from './dto/booked-ticket.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
