@@ -27,21 +27,27 @@ jobs:
            name: Build backend
            with:
                context: ./backend
-               push: true
-               tags: ghcr.io/strigz/film-react-nest-backend:latest
+               push: ${{ github.ref == 'refs/heads/main' }}
+               tags: |
+                    ghcr.io/strigz/film-react-nest-backend:latest
+                    ghcr.io/strigz/film-react-nest-backend:${{ github.sha }}
 
          - uses: docker/build-push-action@v5
            name: Build frontend
            with:
             context: ./frontend
-            push: true
-            tags: ghcr.io/strigz/film-react-nest-frontend:latest
+            push: ${{ github.ref == 'refs/heads/main' }}
+            tags: | 
+                  ghcr.io/strigz/film-react-nest-frontend:latest 
+                  ghcr.io/strigz/film-react-nest-frontend:${{ github.sha }}
 
          - uses: docker/build-push-action@v5
            name: Build nginx
            with:
             context: ./nginx
-            push: true
-            tags: ghcr.io/strigz/film-react-nest-nginx:latest
+            push: ${{ github.ref == 'refs/heads/main' }}
+            tags: | 
+                  ghcr.io/strigz/film-react-nest-nginx:latest
+                  ghcr.io/strigz/film-react-nest-nginx:${{ github.sha }}
 
       
