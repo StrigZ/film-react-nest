@@ -15,7 +15,7 @@ describe('JsonLogger', () => {
     errorSpy.mockRestore();
   });
 
-  it('log without context', () => {
+  it('omits the context field when no context is passed', () => {
     jsonLogger.log('test');
 
     expect(console.log).toHaveBeenCalledTimes(1);
@@ -25,7 +25,7 @@ describe('JsonLogger', () => {
     expect(record).not.toHaveProperty('context');
     expect(record).toMatchObject({ level: 'log', message: 'test' });
   });
-  it('log with context', () => {
+  it('puts the context argument into the context field', () => {
     jsonLogger.log('test', 'JsonLogger');
     expect(console.log).toHaveBeenCalledTimes(1);
     const record: Record<string, unknown> = JSON.parse(
@@ -37,7 +37,7 @@ describe('JsonLogger', () => {
       context: 'JsonLogger',
     });
   });
-  it('error with stack', () => {
+  it('puts the stack argument into the stack field', () => {
     jsonLogger.error('test', 'Stack', 'JsonLogger');
     expect(console.error).toHaveBeenCalledTimes(1);
     const record: Record<string, unknown> = JSON.parse(
@@ -50,7 +50,7 @@ describe('JsonLogger', () => {
       stack: 'Stack',
     });
   });
-  it('correctly handles fatal', () => {
+  it('writes fatal records to stderr with the stack field and writes to stderr', () => {
     jsonLogger.fatal('test', 'Stack', 'JsonLogger');
     expect(console.error).toHaveBeenCalledTimes(1);
     const record: Record<string, unknown> = JSON.parse(
